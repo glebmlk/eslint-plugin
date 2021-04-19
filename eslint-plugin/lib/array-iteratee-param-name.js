@@ -58,7 +58,7 @@ module.exports = {
             description: 'Param\'s names of array iteratee should be verbose',
             category: 'Stylistic Issues',
             recommended: false,
-            url: '',
+            url: 'https://github.com/glebmlk/eslint-plugin',
         },
         messages: {
             variableNameTooShort: 'Iteratee param(s) name too short',

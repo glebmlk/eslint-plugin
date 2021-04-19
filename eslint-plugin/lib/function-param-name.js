@@ -29,7 +29,7 @@ module.exports = {
             description: 'Param\'s names of functions should be verbose',
             category: 'Stylistic Issues',
             recommended: false,
-            url: '',
+            url: 'https://github.com/glebmlk/eslint-plugin',
         },
         messages: {
             variableNameTooShort: 'Function param(s) name too short',
