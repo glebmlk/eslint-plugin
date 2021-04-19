@@ -1,0 +1,10 @@
+{
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "rules": {
+      "function-expression/function-param-name": "warn",
+      "function-expression/array-iteratee-param-name": "warn"
+    },
+    "plugins": ["function-expression"]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "eslint-plugin-function-expression",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin"
+  ],
+  "author": "GLeb Myalik",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "jest": "^26.6.3"
+  }
+}

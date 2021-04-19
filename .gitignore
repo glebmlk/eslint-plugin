@@ -1,0 +1,4 @@
+.vscode
+app/node_modules
+eslint-plugin/node_modules
+.DS_Store
