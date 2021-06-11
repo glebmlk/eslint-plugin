@@ -20,7 +20,7 @@ const ARRAY_METHODS_WITH_TWO_PARAMS_UNDER_LINT = [
 ];
 
 const defaultOptions = ['always', {
-    minLength: 4,
+    minLength: 2,
     validNames: []
 }];
 
@@ -73,7 +73,7 @@ module.exports = {
                 properties: {
                     minLength: {
                         type: 'number',
-                        description: 'Minimum length of param\'s name, default is 4'
+                        description: 'Minimum length of param\'s name, default is 2'
                     },
                     validNames: {
                         type: 'array',

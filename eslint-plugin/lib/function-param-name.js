@@ -1,12 +1,15 @@
 const FUNCTION_EXPRESSIONS = [
     'ArrowFunctionExpression',
     'FunctionExpression',
-    'FunctionDeclaration'
-]
+    'FunctionDeclaration',
+    'MethodDefinition',
+    'ClassProperty',
+];
 
 const defaultOptions = ['always', {
-    minLength: 4,
-    validNames: []
+    minLength: 2,
+    validNames: [],
+    expressions: [],
 }];
 
 function getFunctionExpression(node) {
@@ -20,6 +23,32 @@ function isValidArgument(node, [_, config]) {
     };
 
     return node.name.length >= config.minLength || config.validNames.includes(node.name);
+}
+
+function shouldValidateExpression(functionExpressionType, config) {
+    config = {
+        ...defaultOptions[1],
+        ...config
+    };
+
+    if (!config.expressions.length) {
+        return true;
+    }
+
+    return !config.expressions.includes(functionExpressionType)
+}
+
+function validateExpression(node, functionExpression, context) {
+    functionExpression.params.forEach(param => {
+        if (node === param) {
+            if (!isValidArgument(node, context.options) && context.options[0] !== 'never') {
+                context.report({
+                    node,
+                    messageId: 'variableNameTooShort',
+                });
+            }
+        }
+    });
 }
 
 module.exports = {
@@ -44,7 +73,7 @@ module.exports = {
                 properties: {
                     minLength: {
                         type: 'number',
-                        description: 'Minimum length of param\'s name, default is 4'
+                        description: 'Minimum length of param\'s name, default is 2'
                     },
                     validNames: {
                         type: 'array',
@@ -53,7 +82,16 @@ module.exports = {
                             type: 'string'
                         },
                         additionalItems: false
-                    }
+                    },
+                    expressions: {
+                        type: 'array',
+                        description: 'List of expressions to validate, default is [] – all expressions are validated',
+                        items: {
+                            type: 'string',
+                            enum: ['FunctionExpression', 'FunctionDeclaration', 'ArrowFunctionExpression', 'MethodDefinition', 'ClassProperty']
+                        },
+                        additionalItems: false
+                    },
                 },
                 additionalProperties: false
             }
@@ -68,16 +106,33 @@ module.exports = {
                     return;
                 }
 
-                functionExpression.params.forEach(param => {
-                    if (node === param) {
-                        if (!isValidArgument(node, context.options) && context.options[0] !== 'never') {
-                            context.report({
-                                node,
-                                messageId: 'variableNameTooShort',
-                            });
+                switch (functionExpression.type) {
+                    case 'ArrowFunctionExpression': {
+                        if (shouldValidateExpression(functionExpression.type, context.options) && shouldValidateExpression(functionExpression.parent.type, context.options)) {
+                            validateExpression(node, functionExpression, context)
                         }
-                    }
-                });
+                    } break;
+                    case 'FunctionExpression': {
+                        if (shouldValidateExpression(functionExpression.type, context.options) && shouldValidateExpression(functionExpression.parent.type)) {
+                            validateExpression(node, functionExpression, context)
+                        }
+                    } break;
+                    case 'FunctionDeclaration': {
+                        if (shouldValidateExpression(functionExpression.type, context.options) && shouldValidateExpression(functionExpression.parent.type)) {
+                            validateExpression(node, functionExpression, context)
+                        }
+                    } break;
+                    case 'MethodDefinition': {
+                        if (shouldValidateExpression(functionExpression.type, context.options)) {
+                            validateExpression(node, functionExpression.value, context)
+                        }
+                    } break;
+                    case 'ClassProperty': {
+                        if (shouldValidateExpression(functionExpression.type, context.options)) {
+                            validateExpression(node, functionExpression.value, context)
+                        }
+                    } break;
+                }
             }
         };
     }
